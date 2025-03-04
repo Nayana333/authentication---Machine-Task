@@ -7,24 +7,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Login</h2>
+    <div class="container mt-5" style="max-width: 400px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); margin: 80px auto;">
+        <h2 class="text-center mb-4" style="color: #333;">Login</h2>
         <form id="loginForm">
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" required>
+                <label for="email" class="form-label" style="font-weight: 500;">Email</label>
+                <input type="email" class="form-control" id="email" required style="border-radius: 5px;">
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" required>
+                <label for="password" class="form-label" style="font-weight: 500;">Password</label>
+                <input type="password" class="form-control" id="password" required style="border-radius: 5px;">
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 5px;">Login</button>
         </form>
-        <div id="message" class="mt-3"></div>
-        <p class="mt-3">Don't have an account? <a href="index.html">Register</a></p>
+        <div id="message" class="mt-3" style="text-align: center; font-weight: bold; color: red;"></div>
+        <p class="mt-3 text-center">Don't have an account? <a href="/getRegister" style="color: #007bff; text-decoration: none;">Register</a></p>
     </div>
+    
 
-    <script>
+    <!-- <script>
         const form = document.getElementById('loginForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -32,7 +33,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('/api/login', {
+                const response = await fetch('/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
@@ -40,7 +41,7 @@
                 const result = await response.json();
                 if (result.token) {
                     localStorage.setItem('token', result.token);
-                    window.location.href = 'home.html';
+                    window.location.href = '/getHome';
                 } else {
                     document.getElementById('message').innerHTML = result.error;
                 }
@@ -48,6 +49,37 @@
                 document.getElementById('message').innerHTML = 'Login failed!';
             }
         });
-    </script>
+    </script> -->
+
+<script>
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/login', {  // Ensure API route matches backend
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (result.token) {
+                localStorage.setItem('token', result.token); 
+                window.location.href = '/getHome'; 
+            } else {
+                document.getElementById('message').innerHTML = result.error;
+            }
+        } catch (error) {
+            document.getElementById('message').innerHTML = 'Login failed!';
+        }
+    });
+</script>
+
+
+
 </body>
 </html>

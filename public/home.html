@@ -24,15 +24,33 @@
         <div id="message" class="mt-3"></div>
     </div>
 
+
+
+
     <script>
         async function fetchUsers() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('/api/users', {
-                    headers: { 'Authorization': token }
+                if (!token) {
+                    window.location.href = '/'; 
+                    return;
+                }
+    
+                const response = await fetch('/users', {
+                    headers: { 
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    }
                 });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+    
                 const users = await response.json();
                 const userList = document.getElementById('userList');
+                userList.innerHTML = ''; 
+    
                 users.forEach(user => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -47,26 +65,53 @@
                     `;
                     userList.appendChild(row);
                 });
+    
             } catch (error) {
                 document.getElementById('message').innerHTML = 'Failed to load users';
             }
         }
-
+    
         async function deleteUser(userId) {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`/api/users/${userId}`, {
+                const response = await fetch(`/users/${userId}`, {
                     method: 'DELETE',
-                    headers: { 'Authorization': token }
+                    headers: { 
+                        'Authorization': `Bearer ${token}`, // Correct format
+                        'Content-Type': 'application/json'
+                    }
                 });
+    
                 const result = await response.json();
                 document.getElementById('message').innerHTML = result.message;
-                window.location.reload();
+                fetchUsers(); // Refresh user list after deletion
+    
             } catch (error) {
                 document.getElementById('message').innerHTML = 'Failed to delete user';
             }
         }
-
+    
+        async function updateUser(userId, name, phone) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`, 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, phone })
+                });
+    
+                const result = await response.json();
+                document.getElementById('message').innerHTML = 'User updated successfully';
+                fetchUsers(); 
+    
+            } catch (error) {
+                document.getElementById('message').innerHTML = 'Failed to update user';
+            }
+        }
+    
         function editUser(userId) {
             const newName = prompt('Enter new name:');
             const newPhone = prompt('Enter new phone:');
@@ -74,24 +119,10 @@
                 updateUser(userId, newName, newPhone);
             }
         }
-
-        async function updateUser(userId, name, phone) {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch(`/api/users/${userId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': token },
-                    body: JSON.stringify({ name, phone })
-                });
-                const result = await response.json();
-                document.getElementById('message').innerHTML = 'User updated successfully';
-                window.location.reload();
-            } catch (error) {
-                document.getElementById('message').innerHTML = 'Failed to update user';
-            }
-        }
-
+    
         document.addEventListener('DOMContentLoaded', fetchUsers);
     </script>
+    
 </body>
+
 </html>

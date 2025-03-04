@@ -2,9 +2,22 @@ const User = require('../model/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-exports.getLogin = async (req ,res) =>{
-    res.sendFile(path.join(__dirname, 'public','login.html'));
-}
+const path = require('path');
+
+exports.getLogin = async (req, res) => {
+    console.log('reached')
+    res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
+};
+
+exports.getRegister = async (req, res) => {
+    console.log('reached')
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+};
+
+exports.getHome = async (req, res) => {
+    console.log('reached')
+    res.sendFile(path.join(__dirname, '..', 'public', 'home.html'));
+};
 
 // Register new user
 exports.registerUser = async (req, res) => {
@@ -30,6 +43,7 @@ exports.loginUser = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.json({ token });
+        console.log(token)
     } catch (error) {
         res.status(500).json({ error: 'Login failed' });
     }
